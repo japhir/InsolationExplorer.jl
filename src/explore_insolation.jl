@@ -1,16 +1,15 @@
-function explore_insolation(
-    S0 =
-    # 1361 # Eocene
-        # 1368 # same as La04 webtool
-        1367.1 # Menviel 2019, same as models
-    )
+function explore_insolation()
+    bg_color = RGB(0.2, 0.2, 0.2)
+    fg_color = RGB(0.9, 0.9, 0.9)
+
     modern_ecc = 0.01670545044954422
     modern_obl = rad2deg(0.4090928042223287)
     modern_prec = 0.0
     modern_lpx = rad2deg(1.7962486166737615)
     modern_cp = 0.01628268726247491
 
-    finf = Figure()
+    finf = Figure(; backgroundcolor = bg_color,
+                  textcolor = fg_color)
     eccs = 0:0.000001:0.999
     obls = -90:0.001:90
     # obls = 0.0:0.001:pi
@@ -44,10 +43,16 @@ function explore_insolation(
                     #  startvalue = 0),
                     # 102.91746469161896
                     (label = "Size factor",
-                     range = [1.0, 100.0, 1000.0, 2000.0, 3000.0, 4000.0, 5000.0],
+                     range = [1.0, 100.0, 200.0, 1000.0, 2000.0, 3000.0, 4000.0],
                      format = "{:.2f}×",
-                     startvalue = 1.0)
+                     startvalue = 3000.0)
                     )
+    for s in sg.sliders
+        s.color_active[] = RGBA(1.0, 0.9, 0.4, 1.0)
+        s.color_active_dimmed[] = RGBA(0.7, 0.6, 0.4, 1.0)
+        s.color_inactive[] = RGBA(0.3, 0.3, 0.3, 1.0)
+    end
+
     # make the Observables available
     ecc = sg.sliders[1].value
     # prec = sg.sliders[2].value
@@ -58,26 +63,37 @@ function explore_insolation(
     # L = sg.sliders[6].value
     scale_factor = sg.sliders[6].value
 
+    tb = Textbox(finf[3,1], placeholder = "Enter Solar Constant S₀\ndefault = 1367.1 Wm¯²",
+            validator = Float64,
+            tellwidth = false, tellheight = true, )
+    # 1361 # Eocene
+    # 1368 # same as La04 webtool
+    S0 = Observable(1367.1) # Menviel 2019, same as models
+    on(tb.stored_string) do s
+        S0[] = parse(Float64, s)
+    end
+
     # calculate insolation grid
     lats = deg2rad.(-90:90 |> collect)
     lons = deg2rad.(0:359 |> collect)
     rf = zeros(length(lons), length(lats))
-    ref = lift(ecc, obl, lpx) do pars...
+    ref = lift(ecc, obl, lpx, S0) do e, t, l, S0
         for (j, lat) in enumerate(lats), (i, lon) in enumerate(lons)
-            rf[i,j] = SNVec.insolation(pars[1],
-                                       deg2rad(pars[2]),
-                                       # pars[3] / SNVec.R2D,
-                                       mod((deg2rad(pars[3]) - pi), 2pi),
-                                       longitude = lon,
-                                       latitude = lat,
-                                       S0 = S0, H = nothing)
+            rf[i,j] = insolation(e,
+                                 deg2rad(t),
+                                 mod((deg2rad(l) - pi), 2pi),
+                                 longitude = lon,
+                                 latitude = lat,
+                                 S0 = S0, H = nothing)
         end
         rf
     end
 
     # plot insolation grid
     ax_ins = Axis(finf[1,1],
-                  xlabel = "True Solar Longitude (°)", ylabel = "Latitude (°)")
+                  xlabel = "True Solar Longitude (°)",
+                  ylabel = "Latitude (°)",
+                  backgroundcolor = bg_color)
     cb1 = image!(ax_ins,
                  rad2deg.(extrema(lons)), rad2deg.(extrema(lats)),
                  ref,
@@ -151,7 +167,7 @@ function explore_insolation(
     # probably incorrect?!? not used yet
     mean_anomaly = lift(true_anomaly, ecc) do nu, e
         M = atan(sqrt(1-e^2)*sind(nu), e + cosd(nu)) - e * (sqrt(1-e^2)*sind(nu))/(1+e*cosd(nu))
-        M * SNVec.R2D # everything in degrees
+        rad2deg(M)
     end
     # now correctly traces nu
     earth_location = lift(lpx,true_anomaly, ecc) do lpx, nu, e
@@ -173,7 +189,7 @@ function explore_insolation(
     ss = [Point3f(0.0,0.0,0.0), Point3f(0.0,2.0,0.0)]
     o = Point3f(0.0, 0.0, 0.0) # the origin
     n = Vec3f(0.,0.,1.) # the orbit normal
-    lan = SNVec.df.lan[1] + SNVec.OMT
+    lan = 255.5932487735715 # SNVec.df.lan[1] + SNVec.OMT
     lanv = Vec3f(cosd(lan), sind(lan), 0.0)
     # lanv = lift(lpx) do lpx
     #     Rz = RotMatrix3(AngleAxis(mod(lpx + 180.0, 360)*pi/180, 0,0,1))
@@ -235,12 +251,13 @@ function explore_insolation(
         show_axis = false,
         # scenekw = (; lights = [PointLight(RGBf(5,5,5), Point3f(0,0,0))])) # more accurate?
         # but it attenuates too fast, so instead point a directional light at the Earth so it seems to be super far
-        scenekw = (; lights = [DirectionalLight(RGBf(2,2,2), earth_location)]))
+        scenekw = (; lights = [DirectionalLight(RGBf(1,1,1), earth_location)]))
     # lines!(ax, ws, color = :lightblue, label = "Winter Solstice")
     # lines!(ax, ae, color = :brown, label = "Autumnal Equinox")
     # lines!(ax, ss, color = :gold, label = "Summer Solstice")
     # lines!(ax, [o, n], color = :green, label = L"Orbit normal $\vec{n}$")
     # lines!(ax, @lift([o, $s]), color= :red, label = L"Spin $\vec{s}$")
+
 
     # coordinate system with 3d arrows
     arrow_tip_length = 0.06
@@ -249,7 +266,9 @@ function explore_insolation(
             arrowsize = Vec3f(0.05, 0.05, arrow_tip_length),
             # no shading so they don't show up black when backlit by our
             # directional light
-            shading = NoShading)
+            # fxaa = true, faoo = true# ,
+            shading = NoShading
+            )
     arrows!(ax, [o], [Vec3f(arrow_length,0,0)]; color = :orange, opts...)
     arrows!(ax, [o], [Vec3f(0,arrow_length,0)]; color = :gold, opts...)
     arrows!(ax, [o], [Vec3f(0,0,arrow_length)]; color = :green, opts...)
@@ -271,7 +290,7 @@ function explore_insolation(
     # add arc for obliquity
     arc!(ax, Point2f(0.), arrow_length - 0.1, 0.,
          @lift(-$obl/180*pi),
-         color = :purple,
+         color = :red,
          transformation =
              (;rotation = Makie.rotation_between(Point(1.0, 0.0, 0.0), Point(0.0, cosd(90), sind(90)))),
          label = "Obliquity ϵ")
@@ -279,15 +298,42 @@ function explore_insolation(
     # lines!(ax, [o, Vec3f(RotMatrix3(AngleAxis(minimum(x1_1.obliquity), 1.0, 0.0, 0.0)) * n)], color= :red)
     # lines!(ax, [o, Vec3f(RotMatrix3(AngleAxis(maximum(x1_1.obliquity), 1.0, 0.0, 0.0)) * n)], color= :red)
     # plot an arc around the longitude of perihelion
-    arc!(ax, Point2f(0), 0.3, 0, @lift(mod(pi+$lpx/180*pi, 2pi)), color = :purple, L"\bar\omega")
+    arc!(ax, Point2f(0), 0.3, 0, @lift(mod(pi + deg2rad($lpx), 2pi)), color = :purple, L"\bar\omega")
+    arc!(ax, Point2f(0), 0.4, 0, @lift(deg2rad($lon)), color = :gold)
 
     # points
     scatter!(ax, o, color=:gold, markersize=30, label= L"Sun $\odot$")
     scatter!(ax, f2, color=:red, markersize=5, label=L"f_2")
     scatter!(ax, earth_location, color=:blue, markersize=10, label=L"Earth $\oplus$") # might be corrections now?
+
     # draw them to scale XD haha
-    earth_mesh = GeometryBasics.uv_normal_mesh(Sphere(Point3f(0., 0., 0.), 1.))
-    earth_texture = load(Makie.assetpath("earth.png"))
+    earth_mesh = GeometryBasics.uv_normal_mesh(Sphere(Point3f(0., 0., 0.), 1.0))
+
+    # textures from https://www.solarsystemscope.com/textures/
+    earth_map = #load(Makie.assetpath("earth.png"))
+        # load(download("http://upload.wikimedia.org/wikipedia/commons/5/56/Blue_Marble_Next_Generation_%2B_topography_%2B_bathymetry.jpg"))
+        load(download("https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg"))
+
+    earth_clouds = load(download("https://www.solarsystemscope.com/textures/download/2k_earth_clouds.jpg"))
+
+    cloud_alpha = float.(Gray.(earth_clouds))
+    cloud_rgba = RGBA.(1.0,1.0,1.0, cloud_alpha)
+    blend(fg::RGBA, bg::RGBA) = begin
+        α = alpha(fg)
+        RGBA(
+            red(fg) * α + red(bg) * (1 - α),
+            green(fg) * α + green(bg) * (1 - α),
+            blue(fg) * α + blue(bg) * (1 - α),
+            1.0
+        )
+    end
+    earth_texture = blend.(cloud_rgba, RGBA.(earth_map, 1.0))
+
+    # earth_specular = Float32.(Gray.(load(download("https://www.solarsystemscope.com/textures/download/2k_earth_specular_map.tif"))))
+    # earth_normal # maybe someday?
+    stars_texture = load(download("https://www.solarsystemscope.com/textures/download/2k_stars_milky_way.jpg"))
+    sun_texture = load(download("https://www.solarsystemscope.com/textures/download/2k_sun.jpg"))
+
 
     # earth_latitude = lift(lat) do lat
     #     GeometryBasics.Cylinder(Point3f(0.,0.,0.), Point3f(0.,0.,cosd(lat)), sind(lat))
@@ -295,9 +341,10 @@ function explore_insolation(
 
     INCT = 7.155
     OMT = 75.594
+
     Sun = meshscatter!(ax, o,
                        marker = earth_mesh,
-                       color = load("sunmap.jpg"),
+                       color = sun_texture,
                        rotation = Vec3f(0., sind(INCT), cosd(OMT)),
                        markersize = @lift($scale_factor * 0.00465047),
                        clip_planes = @lift([Plane3f(-$(ax.scene.camera.view_direction), 0.1)]),
@@ -306,11 +353,12 @@ function explore_insolation(
     Earth = meshscatter!(ax, earth_location,
                          marker = earth_mesh,
                          color = earth_texture,
-                         # TODO: also rotate around s by L?
-                         rotation = s,
-                         markersize = @lift(($scale_factor + 0.01) * 4.26354E-5),
+                         markersize = @lift($scale_factor * 4.26354E-5),
+                         # specular = earth_specular,
+                         specular = .1,
                          shininess = 0.,
-                         specular = 0.)
+                         # TODO: also rotate around s by L?
+                         rotation = s)
     # TODO: plot earth latitude in 3d thing
     # meshscatter!(ax, earth_location, marker = earth_latitude,
     #              rotation = s, markersize = @lift($scale_factor * 4.26354E-5),
@@ -342,10 +390,46 @@ function explore_insolation(
           color = :red,
           position= @lift($s * arrow_length * 1.05), fontsize=22)
     text!(ax, L"\epsilon", color = :red, position = @lift(($n + ($s - n)/2) * arrow_length), fontsize = 22)
-    # TODO: fix label location
-    text!(ax, L"\bar\omega", color = :purple,
-          position = @lift(0.35 * (Vec3f(1,0,0) - (Vec3f(1,0,0) - $perihelion[2])/2)),
+    text!(ax, L"\nu", color = :gold,
+          position = @lift(0.5 .* Vec3f(cosd($lon/2), sind($lon/2), 0.)),
           fontsize = 22)
-    @lift(mod(pi+$lpx/180*pi, 2pi))
+    text!(ax, L"\bar\omega", color = :purple,
+          position = @lift(0.4 .*
+              # this is a little annoying because of the whole +180° thing.
+              Vec3f(
+                  mod(pi + deg2rad($lpx), 2pi) < pi ? cosd($lpx/2-90) : -cosd($lpx/2-90),
+                  mod(pi + deg2rad($lpx), 2pi) < pi ? sind($lpx/2-90) : -sind($lpx/2-90),
+                  0.)),
+          fontsize = 22)
+
+    cam3d!(ax.scene,
+           # projectiontype = :orthographic,
+           )
+    cameracontrols(ax.scene).settings.center[] = false
+    Stars = meshscatter!(ax, o,
+                         marker = earth_mesh,
+                         color = stars_texture,
+                         rotation = Vec3f(0., sind(INCT), cosd(OMT)),
+                         markersize = 1000,
+                         clip_planes =  @lift([Plane3f($(ax.scene.camera.view_direction), -0.0001)]),
+                         shading = NoShading)
+
+    # TODO: figure out how to set initial camera postition
+    # below doesn't seem to do anything...
+    # update_cam!(finf.content[4].scene, Vec3d(1,1,1), Vec3d(0), Vec3d(0,0,1))
+    # update_cam!(finf.content[4].scene,
+    #             cameracontrols(finf.content[4].scene),
+    #             2pi, pi, pi/20)
+    # update_cam!(finf.content[4].scene)
+    finf
+    # cameracontrols(finf.content[5].scene).eyeposition[] = Vec3f(2)
+    # cameracontrols(finf.content[5].scene).lookat[] = Vec3f(0.)
+    # cameracontrols(finf.content[5].scene).upvector[] = Vec3f(0., 0., 1.)
+    # cameracontrols(finf.content[5].scene).fov[] = 1
+    # update_cam!(finf.content[5].scene)
+    # projectiontype = Makie.Orthographic,
+    #                zoom_shift_lookat = false,
+    #                eyeposition = Vec3d(1.0),
+    #                center = false
     finf
 end
