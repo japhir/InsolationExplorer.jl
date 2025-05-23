@@ -10,16 +10,18 @@ Calculate insolation at the top of the atmosphere.
 - `obliquity::Real` the Earth's obliquity or tilt in radians.
 - `lpx::Real` the longitude of perihelion with respect
    to the moving equinox in radians.
+
+# Keyword Arguments
 - `longitude::Real` is the true solar longitude in radians.
 - `latitude::Real` is Earth's latitude.
 - `S0::Real` the total solar irradiance.
 - `H::Real` the sun hour angle in radians.
 
 True solar longitude can be specified as:
-  pi/2   for the Summer Solstice
-  pi     for the Autumn Equinox
-  3pi/2  for the Winter Solstice
-  0      for the Spring Equinox
+- `pi/2`   for the Summer Solstice
+- `pi`     for the Autumn Equinox
+- `3pi/2`  for the Winter Solstice
+- `0`      for the Spring Equinox
 
 The `S0` value defualts to 1360.7 Wm¯² which is the same as the new PMIP4
 transient simulations (Otto-Bliesner, 2017, Menviel, 2019). A value of 1368
