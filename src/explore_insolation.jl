@@ -1,3 +1,4 @@
+"Plot the interactive insolation explorer."
 function explore_insolation()
     bg_color = RGB(0.2, 0.2, 0.2)
     fg_color = RGB(0.9, 0.9, 0.9)
