@@ -14,30 +14,34 @@ We use the [Julia](https://julialang.org) programming languate with the
 [Makie](https://docs.makie.org/stable/) plotting library for speedy interactive
 exploration.
 
-[Install Julia](https://julialang.org/install/) via `juliaup`.
+[Install Julia](https://julialang.org/install/).
 
 Run julia and install this package and the plotting library Makie.
 
-```julia
-using Pkg
-Pkg.add("GLMakie")
-Pkg.add("InsolationExplorer")
+In the [REPL](https://docs.julialang.org/en/v1/stdlib/REPL/), hit `]` (above
+Enter) to go to `Pkg` mode (the prompt will change).
+
+Then copy-paste the below and hit enter.
+
 ```
+add https://github.com/japhir/InsolationExplorer.jl
+```
+
+Running this may take a while, because it will also install GLMakie, the
+plotting library.
 
 ## Getting Started
 
-load the packages
+load the package
 ```julia
-using GLMakie
-GLMakie.activate!()
 using InsolationExplorer
 ```
 
 Calculate insolation for t₀
 ```julia
 insolation(0.016705, 0.4090928042223287, 1.7962486166737615;
-                  longitude = pi/2, latitude = deg2rad(65),
-                  S0 = 1360.7, H = nothing)
+           longitude = pi/2, latitude = deg2rad(65),
+           S0 = 1360.7, H = nothing)
 ```
 
 Create the plot
