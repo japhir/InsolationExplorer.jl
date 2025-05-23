@@ -10,7 +10,7 @@ FileIO = "1.17.0"
 GLMakie = "0.11.5"
 GeometryBasics = "0.5.7"
 Rotations = "1.7.1"
-Downloads =  "1.6.0"
+Downloads =  "1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
