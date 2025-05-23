@@ -10,24 +10,21 @@ the moving equinox.
 
 ## Installation
 
-We use the [Julia](https://julialang.org) programming languate with the
+We use the [Julia](https://julialang.org) programming language with the
 [Makie](https://docs.makie.org/stable/) plotting library for speedy interactive
 exploration.
 
-[Install Julia](https://julialang.org/install/).
-
-Run julia and install this package and the plotting library Makie.
-
-Open the [REPL](https://docs.julialang.org/en/v1/stdlib/REPL/) and
-then copy-paste the below and hit enter.
+1. [Install Julia](https://julialang.org/install/).
+2. Open the [REPL](https://docs.julialang.org/en/v1/stdlib/REPL/) and
+   then copy-paste the below and hit enter.
 
 ```
 using Pkg; Pkg.add("https://github.com/japhir/InsolationExplorer.jl")
 ```
 
-Running this may take a while, because it will also install GLMakie, the
-plotting library. However, after the first install and launch, everything
-should be a lot faster!
+Running this will take a while, because it will also install `GLMakie`, the
+plotting library and all other dependencies. However, after the first install
+and launch, everything should be a lot faster!
 
 
 ## Getting Started
