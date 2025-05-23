@@ -18,34 +18,23 @@ exploration.
 
 Run julia and install this package and the plotting library Makie.
 
-In the [REPL](https://docs.julialang.org/en/v1/stdlib/REPL/), hit `]` (above
-Enter) to go to `Pkg` mode (the prompt will change).
-
-Then copy-paste the below and hit enter.
+Open the [REPL](https://docs.julialang.org/en/v1/stdlib/REPL/) and
+then copy-paste the below and hit enter.
 
 ```
-add https://github.com/japhir/InsolationExplorer.jl
+using Pkg; Pkg.add("https://github.com/japhir/InsolationExplorer.jl")
 ```
 
 Running this may take a while, because it will also install GLMakie, the
-plotting library.
+plotting library. However, after the first install and launch, everything
+should be a lot faster!
+
 
 ## Getting Started
 
-load the package
+Load the package and create the plot
 ```julia
 using InsolationExplorer
-```
-
-Calculate insolation for t₀
-```julia
-insolation(0.016705, 0.4090928042223287, 1.7962486166737615;
-           longitude = pi/2, latitude = deg2rad(65),
-           S0 = 1360.7, H = nothing)
-```
-
-Create the plot
-```julia
 f = explore_insolation()
 ```
 
@@ -55,9 +44,16 @@ This results in the following image:
 
 ## Explore the Insolation!
 
-On the left, we plot the insolation at the top of the atmosphere in watts per square metre (colour) as a function of the Earth's latitude and the true solar longitude.
-Below are sliders to change the orbital configuration!
-On the right, we see a 3d visualization of the orbit, the Earth, and if you zoom out or reduce the scale factor, the Sun.
-Drag the left mouse button to rotate around, right mouse button to shift around. Scroll to zoom in/out.
+On the left, we plot the insolation at the top of the atmosphere in watts per
+square metre (colour) as a function of the Earth's latitude and the true solar
+longitude. Below are sliders to change the orbital configuration!
 
-To get started, I would play around with the obliquity, then exaggerate eccentricity, and then slide the longitude of perihelion around.
+On the right, we see a 3d visualization of the orbit, the Earth, and if you
+zoom out or reduce the scale factor, the Sun. Drag the left mouse button to
+rotate around, drag the right mouse button to shift around. Scroll to zoom
+in/out.
+
+To get started, I would play around with the obliquity, then exaggerate
+eccentricity, and then slide the longitude of perihelion around. Note that the
+ranges for the sliders allow for all possible values. If you double-click on
+the slider it will reset it to Earth's modern values.
