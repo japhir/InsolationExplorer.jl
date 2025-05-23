@@ -1,7 +1,7 @@
 name = "InsolationExplorer"
 uuid = "9aa82d85-a86d-4dcc-9bb9-abcbbd692391"
 authors = ["Ilja J. Kocken <ikocken@hawaii.edu> and contributors"]
-version = "1.0.0-DEV"
+version = "0.0.1"
 
 [compat]
 julia = "1.6.7"
