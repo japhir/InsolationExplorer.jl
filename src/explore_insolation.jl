@@ -1,4 +1,20 @@
-"Plot the interactive insolation explorer."
+"""
+    explore_insolation()
+
+Plot the interactive insolation explorer.
+
+On the left, we plot the insolation at the top of the atmosphere in watts per
+square metre (colour) as a function of the Earth's latitude and the true solar
+longitude. Below are sliders to change the orbital configuration! On the right,
+we see a 3d visualization of the orbit, the Earth, and if you zoom out or
+reduce the scale factor, the Sun. Drag the left mouse button to rotate around,
+right mouse button to shift around. Scroll to zoom in/out.
+
+To get started, I would play around with the obliquity, then exaggerate
+eccentricity, and then slide the longitude of perihelion around.
+
+We use textures from https://www.solarsystemscope.com/textures/
+"""
 function explore_insolation()
     bg_color = RGB(0.2, 0.2, 0.2)
     fg_color = RGB(0.9, 0.9, 0.9)
