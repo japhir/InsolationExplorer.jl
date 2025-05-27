@@ -86,3 +86,26 @@ in the positive y-axis direction.
 <!-- Also note that for the 3d visualization we always plot the ellipse with a
 fixed semimajor axis length of 1, rather than the time-varying semimajor axis
 with extrema of 0.9999722469706677 and 1.000035840979405. -->
+
+# References
+
+The function to calculate the insolation is based on the equations in Berger
+(1978) and Laskar et al., (1993), as implemented in
+[`palinsol`](https://cran.r-project.org/package=palinsol) by Crucifix (2023).
+
+We use textures from https://www.solarsystemscope.com/textures/
+
+
+Berger, A. (1978, December). Long-Term Variations of Daily Insolation and
+Quaternary Climatic Changes. Journal of the Atmospheric Sciences, 35 (12),
+2362-2367.
+[doi:10.1175/1520-0469(1978)035<2362:LTVODI>2.0.CO;2](https://doi.org/10.1175/1520-0469(1978)035<2362:LTVODI>2.0.CO;2)
+
+Laskar, J., Joutel, F., & Boudin, F. (1993, March). Orbital, precessional,522
+and insolation quantities for the earth from -20 Myr to +10 Myr. Astronomy and
+Astrophysics, 270 , 522–533. Retrieved 2023-04-19, from
+https://ui.adsabs.harvard.edu/abs/1993A&A...270..522L
+
+Crucifix, M. (2023, May). Palinsol : A R package to compute Incoming Solar
+Rdiation (insolation) for palaeoclimate studies. Zenodo.
+[doi:10.5281/zenodo451.14893715](https://doi.org/10.5281/zenodo451.14893715)
