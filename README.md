@@ -1,6 +1,5 @@
 # InsolationExplorer
-
-[![Build Status](https://github.com/japhir/InsolationExplorer.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/japhir/InsolationExplorer.jl/actions/workflows/CI.yml?query=branch%3Amain)
+<!-- [![Build Status](https://github.com/japhir/InsolationExplorer.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/japhir/InsolationExplorer.jl/actions/workflows/CI.yml?query=branch%3Amain) -->
 
 `InsolationExplorer.jl` is an interactive visualization of the Earth's orbit
 around the sun, where we can change the eccentricity (degree to which the orbit
