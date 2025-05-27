@@ -14,6 +14,8 @@ To get started, I would play around with the obliquity, then exaggerate
 eccentricity, and then slide the longitude of perihelion around.
 
 We use textures from https://www.solarsystemscope.com/textures/
+
+See also [`explore_solution`](@ref).
 """
 function explore_insolation()
     bg_color = RGB(0.2, 0.2, 0.2)

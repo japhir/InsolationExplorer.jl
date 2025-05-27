@@ -18,7 +18,7 @@ exploration.
 2. Open the [REPL](https://docs.julialang.org/en/v1/stdlib/REPL/) and
    then copy-paste the below and hit enter.
 
-```
+```julia
 using Pkg; Pkg.add("https://github.com/japhir/InsolationExplorer.jl")
 ```
 
@@ -27,19 +27,17 @@ plotting library and all other dependencies. However, after the first install
 and launch, everything should be a lot faster!
 
 
-## Getting Started
+## Explore the Insolation
 
 Load the package and create the plot
 ```julia
 using InsolationExplorer
-f = explore_insolation()
+i = explore_insolation()
 ```
 
 This results in the following image:
 
 ![](explore_insolation.png)
-
-## Explore the Insolation!
 
 On the left, we plot the insolation at the top of the atmosphere in watts per
 square metre (colour) as a function of the Earth's latitude and the true solar
@@ -54,3 +52,38 @@ To get started, I would play around with the obliquity, then exaggerate
 eccentricity, and then slide the longitude of perihelion around. Note that the
 ranges for the sliders allow for all possible values. If you double-click on
 the slider it will reset it to Earth's modern values.
+
+## Explore Solution
+
+In the previous plot it is easy to change eccentricity and obliquity to values
+that have never occurred for the Earth. The below plot explores the insolation
+as a function of the `ZB18a(1,1)` astronomical solution.
+
+```julia
+s = explore_solution()
+```
+
+which results in the following image:
+
+![](explore_solution.png)
+
+On the left, we plot the eccentricity, climatic precession, and obliquity. Drag
+a rectangle/scroll to zoom in the top panel. Control + left click to reset the
+zoom. Click in the bottom panel or slide the time slider to select a time.
+Press space to toggle auto play and proceed through time. Use the left and
+right arrows for precise seeking.
+
+On the top right, we plot the insolation at the top of the atmosphere in watts
+per square metre (colour) as a function of the Earth's latitude and the true
+solar longitude. On the bottom right, we see a 3d visualization of the orbit,
+the Earth, and if you zoom out or reduce the scale factor, the Sun. Drag the
+left mouse button to rotate around, right mouse button to shift around. Scroll
+to zoom in/out.
+
+Note that the reference frame remains the same as the previous one, where the
+vernal equinox is fixed in the positive x-axis direction and the orbit normal
+in the positive y-axis direction.
+
+<!-- Also note that for the 3d visualization we always plot the ellipse with a
+fixed semimajor axis length of 1, rather than the time-varying semimajor axis
+with extrema of 0.9999722469706677 and 1.000035840979405. -->
