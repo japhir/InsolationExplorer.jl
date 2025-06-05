@@ -56,14 +56,14 @@ function explore_solution()
                     (label = "Time\n[←→]",
                      range = -1e5:1:0,
                      format = "{:.0f} kyr",
-                     startvalue = -1e5),
+                     startvalue = -2986.0),
                     (label = L"$\lambda_\odot$: True Solar Longitude",
                      range = 0:360,
-                     format = "{:.2f}°",
+                     format = "{:.0f}°",
                      startvalue = 90),
                     (label = "Size factor",
                      range = [1.0, 100.0, 200.0, 1000.0, 2000.0, 3000.0, 4000.0],
-                     format = "{:.2f}×",
+                     format = "{:.0f}×",
                      startvalue = 3000.0)
                     )
     for s in sg.sliders
@@ -465,7 +465,7 @@ function explore_solution()
           color = :red,
           position= @lift($s * arrow_length * 1.05), fontsize=22)
     text!(ax, L"\epsilon", color = :red, position = @lift(($n + ($s - n)/2) * arrow_length), fontsize = 22)
-    text!(ax, L"\nu", color = :gold,
+    text!(ax, L"\lambda_\odot", color = :gold,
           position = @lift(0.5 .* Vec3f(cosd($lon/2), sind($lon/2), 0.)),
           fontsize = 22)
     text!(ax, L"\bar\omega", color = :purple,
