@@ -3,20 +3,33 @@
 
 Plot the interactive astronomical solution explorer.
 
-On the left, we plot the eccentricity, climatic precession, and obliquity. Drag
-a rectangle/scroll to zoom in the top panel. Control + left click to reset the
+On the left, we plot the eccentricity, climatic precession, and obliquity from
+the `ZB18a(1,1)` solution (Zeebe & Lourens, 2019, 2022). Drag a
+rectangle/scroll to zoom in the top panel. Control + left click to reset the
 zoom. Click in the bottom panel or slide the time slider to select a time.
 Press space to toggle auto play and proceed through time. Use the left and
 right arrows for precise seeking.
 
-On the top right, we plot the insolation at the top of the atmosphere in watts per
-square metre (colour) as a function of the Earth's latitude and the true solar
-longitude.
-On the bottom right, we see a 3d visualization of the orbit, the Earth, and if you
-zoom out or reduce the scale factor, the Sun. Drag the left mouse button to
-rotate around, right mouse button to shift around. Scroll to zoom in/out.
+On the top right, we plot the insolation at the top of the atmosphere in watts
+per square metre (colour) as a function of the Earth's latitude and the true
+solar longitude. On the bottom right, we see a 3d visualization of the orbit,
+the Earth, and if you zoom out or reduce the scale factor, the Sun. Drag the
+left mouse button to rotate around, right mouse button to shift around. Scroll
+to zoom in/out.
 
 We use textures from https://www.solarsystemscope.com/textures/
+
+# References
+Zeebe, R. E., & Lourens, L. J. (2019). Solar System chaos and the
+Paleocene–Eocene boundary age constrained by geology and astronomy. _Science_,
+365(6456), 926–929.
+[doi:10.1126/science.aax0612](https://doi.org/10.1126/science.aax0612).
+
+Zeebe, R. E. and Lourens, L. J. (2022). A deep-time dating tool for
+paleo-applications utilizing obliquity and precession cycles: The role of
+dynamical ellipticity and tidal dissipation. _Paleoceanography and
+Paleoclimatology_.
+[doi:10.1029/2021PA004349](https://doi.org/10.1029/2021PA004349).
 
 See also [`explore_insolation`](@ref).
 """
@@ -25,12 +38,17 @@ function explore_solution()
     fg_color = RGB(0.9, 0.9, 0.9)
 
     # read reference data
-    ref1_1 = CSV.read("out.dat",
+    ref1_1 = CSV.read("PT-ZB18a_1-1.dat",
                       DataFrame;
                       delim = ' ',
                       stripwhitespace = true,
                       ignorerepeated = true,
-                      header = [:time, :eccentricity, :obliquity, :precession, :lpx, :climatic_precession])
+                      header = [:time,
+                                :eccentricity,
+                                :obliquity,
+                                :precession,
+                                :lpx,
+                                :climatic_precession])
 
     fins = Figure(; backgroundcolor = bg_color,
                   textcolor = fg_color)
@@ -138,7 +156,7 @@ function explore_solution()
          r.obliquity[1]
     end
     lpx = lift(xslice) do r
-         mod((r.lpx[1] - pi), 2pi)
+        r.lpx[1]
     end
 
     # calculate insolation grid
@@ -149,7 +167,7 @@ function explore_solution()
         for (j, lat) in enumerate(lats), (i, lon) in enumerate(lons)
             rf[i,j] = insolation(ecc,
                                  obl,
-                                 lpx,
+                                 mod(lpx - pi, 2pi),
                                  longitude = lon,
                                  latitude = lat,
                                  S0 = S0, H = nothing)
@@ -184,7 +202,7 @@ function explore_solution()
     # and at t0, where the precession angle phi is 0.
     a = 1
     ef = 0.3 # the scale factor for vectors drawn from Earth origin
-    ep = lift(ecc,lpx) do e,l
+    ep = lift(ecc, lpx) do e, l
         b = a * sqrt(1 - e^2)
         c = e * a # distance from center to each focus
         focus1 = Point3f(-c, 0, 0)
@@ -199,6 +217,7 @@ function explore_solution()
         # Rve = RotMatrix3(AngleAxis(-pi, 0,0,1))
         # rotate ellipse by lpx + pi
         # Rz = RotMatrix3(AngleAxis(deg2rad(mod(l + 180, 360)), 0,0,1))
+        # TODO: should the lpx be +180 or not?
         Rz = RotMatrix3(AngleAxis(mod(l + pi, 2pi), 0,0,1))
         rotated_ellipse = [Rz * p for p in ellipse_points]
         return rotated_ellipse
@@ -226,7 +245,7 @@ function explore_solution()
         rad2deg(M)
     end
     # now correctly traces nu
-    earth_location = lift(lpx,true_anomaly, ecc) do lpx, nu, e
+    earth_location = lift(lpx, true_anomaly, ecc) do lpx, nu, e
         # distance
         rho = (1 - e^2) / (1 + e * cosd(nu))
         x = rho * cosd(nu)
@@ -453,7 +472,7 @@ function explore_solution()
           position = @lift(0.4 .*
               # this is a little annoying because of the whole +180° thing.
               Vec3f(
-                  mod(pi + $lpx, 2pi) < pi ? cos($lpx/2-0.5pi) : -cosd($lpx/2-90),
+                  mod(pi + $lpx, 2pi) < pi ? cos($lpx/2-0.5pi) : -cos($lpx/2-90),
                   mod(pi + $lpx, 2pi) < pi ? sin($lpx/2-0.5pi) : -sin($lpx/2-0.5pi),
                   0.)),
           fontsize = 22)

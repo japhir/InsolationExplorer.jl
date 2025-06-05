@@ -66,8 +66,9 @@ which results in the following image:
 
 ![](explore_solution.png)
 
-On the left, we plot the eccentricity, climatic precession, and obliquity. Drag
-a rectangle/scroll to zoom in the top panel. Control + left click to reset the
+On the left, we plot the eccentricity, climatic precession, and obliquity from
+the `ZB18a(1,1)` solution (Zeebe & Lourens, 2019, 2022). Drag a
+rectangle/scroll to zoom in the top panel. Control + left click to reset the
 zoom. Click in the bottom panel or slide the time slider to select a time.
 Press space to toggle auto play and proceed through time. Use the left and
 right arrows for precise seeking.
@@ -96,16 +97,27 @@ The function to calculate the insolation is based on the equations in Berger
 We use textures from https://www.solarsystemscope.com/textures/
 
 
+Zeebe, R. E., & Lourens, L. J. (2019). Solar System chaos and the
+Paleocene–Eocene boundary age constrained by geology and astronomy. _Science_,
+365(6456), 926–929.
+[doi:10.1126/science.aax0612](https://doi.org/10.1126/science.aax0612).
+
+Zeebe, R. E. and Lourens, L. J. (2022). A deep-time dating tool for
+paleo-applications utilizing obliquity and precession cycles: The role of
+dynamical ellipticity and tidal dissipation. _Paleoceanography and
+Paleoclimatology_.
+[doi:10.1029/2021PA004349](https://doi.org/10.1029/2021PA004349).
+
 Berger, A. (1978, December). Long-Term Variations of Daily Insolation and
-Quaternary Climatic Changes. Journal of the Atmospheric Sciences, 35 (12),
+Quaternary Climatic Changes. _Journal of the Atmospheric Sciences_, 35 (12),
 2362-2367.
-[doi:10.1175/1520-0469(1978)035<2362:LTVODI>2.0.CO;2](https://doi.org/10.1175/1520-0469(1978)035<2362:LTVODI>2.0.CO;2)
+[doi:10.1175/1520-0469(1978)035<2362:LTVODI>2.0.CO;2](https://doi.org/10.1175/1520-0469(1978)035<2362:LTVODI>2.0.CO;2).
 
 Laskar, J., Joutel, F., & Boudin, F. (1993, March). Orbital, precessional,522
-and insolation quantities for the earth from -20 Myr to +10 Myr. Astronomy and
-Astrophysics, 270 , 522–533. Retrieved 2023-04-19, from
+and insolation quantities for the earth from -20 Myr to +10 Myr. _Astronomy and
+Astrophysics_, 270 , 522–533. Retrieved 2023-04-19, from
 https://ui.adsabs.harvard.edu/abs/1993A&A...270..522L
 
 Crucifix, M. (2023, May). Palinsol : A R package to compute Incoming Solar
-Rdiation (insolation) for palaeoclimate studies. Zenodo.
+Radiation (insolation) for palaeoclimate studies. _Zenodo_.
 [doi:10.5281/zenodo451.14893715](https://doi.org/10.5281/zenodo451.14893715)

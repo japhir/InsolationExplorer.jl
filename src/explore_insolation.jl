@@ -64,7 +64,8 @@ function explore_insolation()
                     (label = "Size factor",
                      range = [1.0, 100.0, 200.0, 1000.0, 2000.0, 3000.0, 4000.0],
                      format = "{:.2f}×",
-                     startvalue = 3000.0)
+                     startvalue = 3000.0),
+                    halign = :left
                     )
     for s in sg.sliders
         s.color_active[] = RGBA(1.0, 0.9, 0.4, 1.0)
@@ -317,8 +318,15 @@ function explore_insolation()
     # lines!(ax, [o, Vec3f(RotMatrix3(AngleAxis(minimum(x1_1.obliquity), 1.0, 0.0, 0.0)) * n)], color= :red)
     # lines!(ax, [o, Vec3f(RotMatrix3(AngleAxis(maximum(x1_1.obliquity), 1.0, 0.0, 0.0)) * n)], color= :red)
     # plot an arc around the longitude of perihelion
-    arc!(ax, Point2f(0), 0.3, 0, @lift(mod(pi + deg2rad($lpx), 2pi)), color = :purple, L"\bar\omega")
+    arc!(ax, Point2f(0), 0.3, 0,
+         @lift(mod(pi + deg2rad($lpx), 2pi)),
+         color = :purple, L"\bar\omega")
     arc!(ax, Point2f(0), 0.4, 0, @lift(deg2rad($lon)), color = :gold)
+    # the true anomaly is measured from the perihelion
+    # arc!(ax, Point2f(0), 0.6,
+    #      @lift(mod(pi + deg2rad($lpx), 2pi)),
+    #      @lift(mod(pi + deg2rad($lpx), 2pi) + deg2rad($true_anomaly)),
+    #      color = :darkgreen)
 
     # points
     scatter!(ax, o, color=:gold, markersize=30, label= L"Sun $\odot$")
@@ -409,9 +417,16 @@ function explore_insolation()
           color = :red,
           position= @lift($s * arrow_length * 1.05), fontsize=22)
     text!(ax, L"\epsilon", color = :red, position = @lift(($n + ($s - n)/2) * arrow_length), fontsize = 22)
-    text!(ax, L"\nu", color = :gold,
+    text!(ax, L"\lambda_\odot", color = :gold,
           position = @lift(0.5 .* Vec3f(cosd($lon/2), sind($lon/2), 0.)),
           fontsize = 22)
+    # also very annoying placement because of -180°
+    # text!(ax, L"\nu", color = :darkgreen,
+    #       position = @lift(0.7 .*
+    #           Vec3f(cosd(mod(180+$lpx,360)/2-90 + $lon/2),
+    #                 sind(mod(180+$lpx,360)/2-90 + $lon/2),
+    #                 0.)),
+    #       fontsize = 22)
     text!(ax, L"\bar\omega", color = :purple,
           position = @lift(0.4 .*
               # this is a little annoying because of the whole +180° thing.
